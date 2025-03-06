@@ -7,7 +7,7 @@ session = requests.Session()
 # Function for calling login API
 def login():
     # Send get request login endpoint to fetch a CSRF token
-    url = "http://127.0.0.1:8000/accounts/login/"
+    url = "https://sc21bphn.pythonanywhere.com/accounts/login/"
     response = session.get(url)
     csrfToken = response.cookies.get('csrftoken')
 
@@ -23,7 +23,8 @@ def login():
         # Put CSRF token in header
         headers = {
             'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Referer': 'https://sc21bphn.pythonanywhere.com/accounts/login/'
         }
 
         # Make post request to login endpoint,
@@ -44,7 +45,7 @@ def login():
 
 # Function for calling logout API   
 def logout():
-    url = "http://127.0.0.1:8000/accounts/logout/"
+    url = "https://sc21bphn.pythonanywhere.com/accounts/logout/"
 
     # Only allow logout if the user is already logged into an account
     if 'sessionid' in session.cookies:
@@ -54,7 +55,8 @@ def logout():
         csrfToken = session.cookies.get('csrftoken')
         headers = {
             'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Referer': 'https://sc21bphn.pythonanywhere.com/accounts/logout/'
         }
 
         # Make post request to the logout endpoint
@@ -77,7 +79,7 @@ def logout():
 # Function for calling all module instances API
 def list():
     # Make GET request to allModuleInstances endpoint + store response
-    url = "http://127.0.0.1:8000/allModuleInstances/"
+    url = "https://sc21bphn.pythonanywhere.com/allModuleInstances/"
     response = session.get(url)
     responseData = response.json()
 
@@ -106,7 +108,7 @@ def list():
 # Function for calling all professor ratings API
 def view():
     # Make GET request to allProfessorRatings endpoint + store response
-    url = "http://127.0.0.1:8000/allProfessorRatings/"
+    url = "https://sc21bphn.pythonanywhere.com/allProfessorRatings/"
     response = session.get(url)
     responseData = response.json()
 
@@ -125,7 +127,7 @@ def view():
 def average(professorCode, moduleCode):
     # Make GET request to professorModuleRating endpoint + store response
     # Use provided professor and module code
-    url = f"http://127.0.0.1:8000/professorModuleRating/{professorCode}/{moduleCode}" 
+    url = f"https://sc21bphn.pythonanywhere.com/professorModuleRating/{professorCode}/{moduleCode}" 
     response = session.get(url)
     responseData = response.json()
 
@@ -142,7 +144,7 @@ def average(professorCode, moduleCode):
 
 # Function for calling rating API
 def rate(professorCode, moduleCode, year, semester, rating):
-    url = "http://127.0.0.1:8000/rateProfessor/"
+    url = "https://sc21bphn.pythonanywhere.com/rateProfessor/"
 
     # Only proceed with API request if user is logged in
     # If not, return error message
@@ -160,7 +162,8 @@ def rate(professorCode, moduleCode, year, semester, rating):
         csrfToken = session.cookies.get('csrftoken')
         headers = {
             'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Referer': 'https://sc21bphn.pythonanywhere.com/rateProfessor/'
         }
 
         # Create new user rating by making request to rating endpoint
@@ -186,7 +189,7 @@ def register():
     # If there is no CSRF token in session, fetch one from login page
     # CSRF token needed for POST request
     if 'csrftoken' not in session.cookies:
-        url = "http://127.0.0.1:8000/accounts/login/"
+        url = "https://sc21bphn.pythonanywhere.com/accounts/login/"
         response = session.get(url)
         csrfToken = response.cookies.get('csrftoken')
     # Else fetch the most recent CSRF token from session
@@ -196,7 +199,8 @@ def register():
     # Add CSRF token to header
     headers = {
             'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Referer': 'https://sc21bphn.pythonanywhere.com/accounts/login/'
         }
     
     # Take user inputs for username, email, password + prep request data
@@ -210,8 +214,10 @@ def register():
     }
 
     # Create new user by making post request to user registration endpoint
-    url = "http://127.0.0.1:8000/registerUser/"
+    url = "https://sc21bphn.pythonanywhere.com/registerUser/"
     response = session.post(url, data=requestData, headers=headers)
+    print(f"Status Code: {response.status_code}")
+    print(f"Response Content: {response.text}")
     responseData = response.json()
 
     # Output result of request
