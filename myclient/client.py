@@ -187,7 +187,7 @@ def view():
         print(f"An error with the network occured during view request: {e}")
         return
 
-# Function for calling average API
+# Function for calling average professor rating API
 def average(professorCode, moduleCode):
     try:
         # Make GET request to professorModuleRating endpoint + store response
