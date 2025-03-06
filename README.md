@@ -4,6 +4,7 @@
 - The server side code can be found in the folder named 'cwk1Project'
 - The client side can be found in the folder named 'myclient'
 
+
 ### How to use the client
 To start the client, cd to the 'myclient' folder and execute the following command:
 
@@ -51,9 +52,22 @@ Once the client has started, it will ask for a command from the user. The follow
     - The user must be logged into an account to enter this command.
     - If this command is successful, the following message will be displayed: 'Rating successfully added to system.'
 
+- **exit** -> closes the application.
 
 
+### PythonAnywhere domain
+The name of the PythonAnywhere domain where this service is being hosted is: ***_sc21bphn.pythonanywhere.com_***
 
 
-Username = sc21bphn
-Password = CwkInDjango80
+### Admin Account
+To login into the admin account registered with this service, use the following credentials after entering the **login** command:
+- Username: sc21bphn
+- Password: CwkInDjango80
+
+### Additional Information
+The admin site can be accessed entering the following url in a browser: **_https://sc21bphn.pythonanywhere.com/admin/_**
+- You will need to log into an admin account to access this site
+
+Additional test accounts have been added to the service for testing. To use these accounts, enter the following credentials after entering the **login** command:
+- Username: testUser1 / testUser2 / testUser3 / testUser4
+- Password: HelloThere80
