@@ -109,16 +109,6 @@ def professorModuleRating(request, professorCode, moduleCode):
 
     logger = logging.getLogger(__name__)
 
-    # Check provided professor code is of a valid format
-    if not professorCode.isalnum():
-        logger.warning('Invalid professor code', professorCode)
-        return JsonResponse({'error': 'Provided professor code is invalid.'}, status=400)
-    
-    # Check provided module code is of a valid format
-    if not moduleCode.isalnum():
-        logger.warning('Invalid module code', moduleCode)
-        return JsonResponse({'error': 'Provided module code is invalid.'}, status=400)
-
     # Try fetch all rating objects for a professor and module instance,
     # and calculate avg rating across retrieved ratings
     try:
