@@ -44,7 +44,7 @@ def login():
                 print("Login successful")
                 return
             else:
-                # If json response, try get error message
+                # If response is json, try get error message
                 try:
                     error = response.json().get('error')
                     print(f"Login failed, please ensure you are using a valid username and password: {error}")
@@ -74,6 +74,7 @@ def logout():
 
             # Fetch most recent CSRF token from session
             # CSRF token needed to make POST request
+            # Return error message if CSRF token cannot be found
             csrfToken = session.cookies.get('csrftoken')
             if not csrfToken:
                 print("Logout failed, CSRF token could not be found. Please try logging in again.")
@@ -96,7 +97,7 @@ def logout():
                 session.headers.pop('X-CSRFToken', None)
                 return
             else:
-                # If json response, try get error message
+                # If response is JSON, try get error message
                 try:
                     error = response.json().get('error')
                     print(f"Logout failed, please ensure you are logged in prior to logging out: {error}")
@@ -121,6 +122,7 @@ def list():
         url = "https://sc21bphn.pythonanywhere.com/allModuleInstances/"
         response = session.get(url)
 
+        # Try get JSON response, return if unsuccessful
         try:
             responseData = response.json()
         except ValueError:
@@ -162,6 +164,7 @@ def view():
         url = "https://sc21bphn.pythonanywhere.com/allProfessorRatings/"
         response = session.get(url)
 
+        # Try get JSON response, return error message if unsuccessful
         try:
             responseData = response.json()
         except ValueError:
@@ -192,6 +195,7 @@ def average(professorCode, moduleCode):
         url = f"https://sc21bphn.pythonanywhere.com/professorModuleRating/{professorCode}/{moduleCode}" 
         response = session.get(url)
         
+        # try get JSON response, return error message if unsuccessful
         try:
             responseData = response.json()
         except ValueError:
@@ -233,6 +237,7 @@ def rate(professorCode, moduleCode, year, semester, rating):
 
             # Fetch CSRF token from session
             # CSRF token needed to make POST request
+            # Show error if CSRF cannot be found
             csrfToken = session.cookies.get('csrftoken')
             if not csrfToken:
                 print("Rating failed, CSRF token could not be found. Please ensure you are logged in before trying again.")
@@ -247,6 +252,7 @@ def rate(professorCode, moduleCode, year, semester, rating):
             # Create new user rating by making request to rating endpoint
             response = session.post(url, data=requestData, headers=headers)
 
+            # Try get JSON response, return error message if unsuccessful
             try:
                 responseData = response.json()
             except ValueError:
@@ -288,6 +294,7 @@ def register():
                 print("Failed to fetch login page from server.", response.status_code)
                 return
             
+            # Refetch CSRF token and check fetch was successful
             csrfToken = response.cookies.get('csrftoken')
             if not csrfToken:
                 print("Registering failed, CSRF token could not be found in login page response.")
@@ -318,14 +325,14 @@ def register():
         url = "https://sc21bphn.pythonanywhere.com/registerUser/"
         response = session.post(url, data=requestData, headers=headers)
 
-
+        # Try get JSON response, return error message if unsuccessful 
         try:
             responseData = response.json()
         except ValueError:
             print(f"Request failed with status code {response.status_code} and a bad JSON response.")
             return
 
-        # Output result of request
+        # Output result of request, or show error depending on status code of request
         if response.status_code == 201:
             print(responseData['register_user'])
             return
