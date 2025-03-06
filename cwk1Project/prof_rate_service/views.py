@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
 
-##NEED TO CHECK HTTP STATUS CODES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #-------------------------------------------------------------------------
 # Service Option 1: allModuleInstances
@@ -29,10 +28,10 @@ def allModuleInstances(request):
     # Catch exceptions if query fails + return error messages with relevant HTTP codes
     except DatabaseError as e:
         logger.exception('Database error: %s', str(e))
-        return JsonResponse({'error': 'Database encountered an error'}, status=500)
+        return JsonResponse({'error': 'Database encountered an error.'}, status=500)
     except Exception as e:
         logger.exception('Unexpected error: %s', str(e))
-        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
+        return JsonResponse({'error': 'An unexpected error occurred.'}, status=500)
     
     if not query:
         logger.info('allModuleInstances query returned no results.')
@@ -78,7 +77,6 @@ def allProfessorRatings(request):
                     'name'
                 )
                 .annotate(rating=Cast(Round(Avg('rating__rating')), IntegerField()))
-                #.annotate(rating=Avg('rating__rating'))
         )
     
     # Catch exceptions if query fails + return error messages with relevant HTTP codes
@@ -90,7 +88,7 @@ def allProfessorRatings(request):
         return JsonResponse({'error': 'An unexpected error occurred.'}, status=500)
     
     if not query:
-        logger.info('allProfessorRatings query returned no results.')
+        logger.info('Searching for professor ratings returned no results.')
         return JsonResponse({'module_instances': []}, safe=False, status=200)
 
     # Query result has all information we need
@@ -111,6 +109,16 @@ def professorModuleRating(request, professorCode, moduleCode):
 
     logger = logging.getLogger(__name__)
 
+    # Check provided professor code is of a valid format
+    if not professorCode.isalnum():
+        logger.warning('Invalid professor code', professorCode)
+        return JsonResponse({'error': 'Provided professor code is invalid.'}, status=400)
+    
+    # Check provided module code is of a valid format
+    if not moduleCode.isalnum():
+        logger.warning('Invalid module code', moduleCode)
+        return JsonResponse({'error': 'Provided module code is invalid.'}, status=400)
+
     # Try fetch all rating objects for a professor and module instance,
     # and calculate avg rating across retrieved ratings
     try:
@@ -126,7 +134,6 @@ def professorModuleRating(request, professorCode, moduleCode):
                 professor_name=F('professor__name')
             )
             .annotate(rating=Cast(Round(Avg('rating')), IntegerField()))
-            #.annotate(rating=Avg('rating'))
         )
 
     # Catch exceptions if query fails + return error messages with relevant HTTP codes
@@ -230,13 +237,12 @@ def rateProfessor(request):
             return JsonResponse({'professor_module_rating': 'Rating successfully added to system.'}, status=201)
 
         # Catch exceptions if any query fails + return error messages with relevant HTTP codes
-        # CHECK HTTP CODES!
         except Professor.DoesNotExist as e:
             logger.exception('DoesNotExist error: %s', str(e))
-            return JsonResponse({'error': 'Provided professor code is invalid'}, status=400)
+            return JsonResponse({'error': 'Provided professor code is invalid'}, status=404)
         except ModuleInstance.DoesNotExist as e:
             logger.exception('DoesNotExist error: %s', str(e))
-            return JsonResponse({'error': 'Provided module instance is invalid. Please check the module code, year, and semester.'}, status=400)
+            return JsonResponse({'error': 'Provided module instance is invalid. Please check the module code, year, and semester.'}, status=404)
         except ValidationError as e:
             logger.exception('Validation error: %s', str(e))
             return JsonResponse({'error': e.message}, status=400)
@@ -279,10 +285,9 @@ def registerUser(request):
             studentGroup = Group.objects.get(name='Student')
             newUser.groups.add(studentGroup)
 
-            return JsonResponse({'register_user': 'User registered successfully'}, status=201)
+            return JsonResponse({'register_user': 'User registered successfully.'}, status=201)
         
         # Catch exceptions if any query fails + return error messages with relevant HTTP codes
-        # CHECK HTTP CODES!
         except IntegrityError as e:
             logger.exception('Integrity error: %s', str(e))
             return JsonResponse({'error': 'An internal error occured during user creation.'}, status=500)
@@ -294,9 +299,10 @@ def registerUser(request):
             return JsonResponse({'error': 'User creation failed due to missing values for either username, email, or password.'}, status=400)
         except Group.DoesNotExist:
             logger.exception('Group error: permission group does not exist.')
-            return JsonResponse({'error': 'Unexpected error occurred when creating user'}, status=500)
+            return JsonResponse({'error': 'Unexpected error occurred when creating user.'}, status=500)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            logger.exception('Unexpected error: %s', str(e))
+            return JsonResponse({'error': 'An unexpected error occurred during user registration.'}, status=500)
         
     return JsonResponse({'error': 'Invalid request method used. Please try again with a POST request.'}, status=405)
 
