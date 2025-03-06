@@ -362,7 +362,7 @@ def main():
 
         commandParts = userCommand.split()
 
-        if userCommand.lower() == 'login':
+        if commandParts[0].lower() == 'login' and len(commandParts) == 2:
             login()
         
         if userCommand.lower() == 'logout':
