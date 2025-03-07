@@ -386,28 +386,28 @@ def main():
                 print("Incorrect number of arguments used for the login command.")
                 print("The login command must be structured as follows: login <url>")
         
-        elif userCommand.lower() == 'logout':
+        elif commandParts[0].lower() == 'logout':
             if len(commandParts) == 1:
                 logout()
             else:
                 print("Incorrect number of arguments used for the logout command.")
                 print("The logout command must be structured as follows: logout")
         
-        elif userCommand.lower() == 'list':
+        elif commandParts[0].lower() == 'list':
             if len(commandParts) == 1:
                 list()
             else:
                 print("Incorrect number of arguments used for the list command.")
                 print("The list command must be structured as follows: list")
 
-        elif userCommand.lower() == 'view':
+        elif commandParts[0].lower() == 'view':
             if len(commandParts) == 1:
                 view()
             else:
                 print("Incorrect number of arguments used for the view command.")
                 print("The view command must be structured as follows: view")
         
-        elif userCommand.lower() == 'register':
+        elif commandParts[0].lower() == 'register':
             if len(commandParts) == 1:
                 register()
             else:
