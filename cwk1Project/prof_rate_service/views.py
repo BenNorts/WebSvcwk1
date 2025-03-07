@@ -239,6 +239,9 @@ def rateProfessor(request):
         except IntegrityError as e:
             logger.exception('Integrity error: %s', str(e))
             return JsonResponse({'error': 'This rating has previously been made for this professor and module instance.'}, status=400)
+        except Exception as e:
+            logger.exception('Unexpected error: %s', str(e))
+            return JsonResponse({'error': 'An unexpected error occurred.'}, status=500)
     
     return JsonResponse({'error': 'Invalid request method used. Please try again with a POST request.'}, status=405)
 
