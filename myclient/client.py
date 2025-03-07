@@ -270,7 +270,7 @@ def rate(professorCode, moduleCode, year, semester, rating):
 
             # Output result of request
             if response.status_code == 201:
-                print(responseData['professor_module_rating'])
+                print(responseData['rating'])
                 return
             elif response.status_code == 401:
                 print("Unauthorised request. Please ensure you are logged in before using this service.")

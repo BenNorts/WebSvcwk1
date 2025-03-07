@@ -224,7 +224,7 @@ def rateProfessor(request):
                     )
             )
 
-            return JsonResponse({'professor_module_rating': 'Rating successfully added to system.'}, status=201)
+            return JsonResponse({'rating': 'Rating successfully added to system.'}, status=201)
 
         # Catch exceptions if any query fails + return error messages with relevant HTTP codes
         except Professor.DoesNotExist as e:
