@@ -5,10 +5,19 @@ from tabulate import tabulate
 session = requests.Session()
 
 # Function for calling login API
-def login():
+def login(input_url):
     try:
+
         # Send get request login endpoint to fetch a CSRF token
         url = "https://sc21bphn.pythonanywhere.com/accounts/login/"
+
+        if input_url != url:
+            print(
+                "Invalid login URL provided. Please make sure you are using the following URL to login: \n"
+                "https://sc21bphn.pythonanywhere.com/accounts/login/"
+            )
+            return
+
         response = session.get(url)
 
         # Check if login page could be fetched
@@ -50,7 +59,7 @@ def login():
                     print(f"Login failed, please ensure you are using a valid username and password: {error}")
                 # Else print an error with response status code
                 except ValueError:
-                    print(f"Login failed, please ensure you are using a valid username and password. Failed with status code: {response.status_code}")
+                    print("Login failed, please ensure you are using a valid username and password.")
                 return
 
         # Return error if CSRF token was not found
@@ -103,11 +112,11 @@ def logout():
                     print(f"Logout failed, please ensure you are logged in prior to logging out: {error}")
                 # Else print an error with response status code
                 except ValueError:
-                    print(f"Login failed, please ensure you are logged in prior to logging out. Failed with code: {response.status_code}")
+                    print("Logout failed, please ensure you are logged in prior to logging out.")
                 return
 
         else:
-            print("Login failed, please ensure you are logged in prior to logging out.")
+            print("Logout failed, please ensure you are logged in prior to logging out.")
             return
 
     # Return error if issue with network during request
@@ -336,9 +345,6 @@ def register():
         if response.status_code == 201:
             print(responseData['register_user'])
             return
-        elif response.status_code == 400:
-            print("Please ensure the provided registration data is valid.")
-            return
         else:
             error = response.json().get('error', 'No error message was given.')
             print(f"An error occured during the request: {error}")
@@ -349,6 +355,21 @@ def register():
         print(f"An error with the network occured during view request: {e}")
         return  
 
+def commandHelp():
+    print("The command entered is not valid. Here is a list of valid commands and their required arguments: ")
+    print("COMMAND                                                          DESCRIPTION")
+    print("register                                                         allows the user to register an account with the server.")
+    print("login <url>                                                      allows the user to log into an existing account.")
+    print("logout                                                           allows the user to log into an existing account.")
+    print("list                                                             allows the user to view a list of all module instances and the professors teaching them.")
+    print("view                                                             allows the user to view the rating of all professors.")
+    print("average <professor_code> <module_code>                           allows the user to view the average rating of a specific professor for a specific module.")
+    print("rate <professor_code> <module_code> <year> <semester> <rating>   allows the user to submit a rating of a specific professor for a specific module instance.")
+    print("exit                                                             exits the application.")
+    print("")
+    return
+
+
 
 # Function for processing user commands
 # Calls relevant functions based on user input
@@ -356,36 +377,67 @@ def main():
     while True:
         userCommand = input("Please enter a command: ")
 
-        # Skip if no user command provided
-        if userCommand == '':
-            continue
-
         commandParts = userCommand.split()
 
-        if commandParts[0].lower() == 'login' and len(commandParts) == 2:
-            login()
+        if commandParts[0].lower() == 'login':
+            if len(commandParts) == 2:
+                login(commandParts[1])
+            else:
+                print("Incorrect number of arguments used for the login command.")
+                print("The login command must be structured as follows: login <url>")
         
-        if userCommand.lower() == 'logout':
-            logout()
+        elif userCommand.lower() == 'logout':
+            if len(commandParts) == 1:
+                logout()
+            else:
+                print("Incorrect number of arguments used for the logout command.")
+                print("The logout command must be structured as follows: logout")
         
-        if userCommand.lower() == 'list':
-            list()
-        
-        if userCommand.lower() == 'view':
-            view()
-        
-        if userCommand.lower() == 'register':
-            register()
+        elif userCommand.lower() == 'list':
+            if len(commandParts) == 1:
+                list()
+            else:
+                print("Incorrect number of arguments used for the list command.")
+                print("The list command must be structured as follows: list")
 
-        if commandParts[0].lower() == 'average' and len(commandParts) == 3:
-            average(commandParts[1], commandParts[2])
+        elif userCommand.lower() == 'view':
+            if len(commandParts) == 1:
+                view()
+            else:
+                print("Incorrect number of arguments used for the view command.")
+                print("The view command must be structured as follows: view")
         
-        if commandParts[0].lower() == 'rate' and len(commandParts) == 6:
-            rate(commandParts[1], commandParts[2], commandParts[3], commandParts[4], commandParts[5])
+        elif userCommand.lower() == 'register':
+            if len(commandParts) == 1:
+                register()
+            else:
+                print("Incorrect number of arguments used for the register command.")
+                print("The register command must be structured as follows: register")
+
+        elif commandParts[0].lower() == 'average':
+            if len(commandParts) == 3:
+                average(commandParts[1], commandParts[2])
+            else:
+                print("Incorrect number of arguments used for the average command.")
+                print("The average command must be structured as follows: average <professor_code> <module_code>")
+        
+        elif commandParts[0].lower() == 'rate':
+            if len(commandParts) == 6:
+                rate(commandParts[1], commandParts[2], commandParts[3], commandParts[4], commandParts[5])
+            else:
+                print("Incorrect number of arguments used for the rate command.")
+                print("The rate command must be structured as follows: average <professor_code> <module_code> <year> <semester> <rating>")
 
         # Exit application if user command is 'exit'
-        if userCommand.lower() == 'exit':
-            break
+        elif userCommand.lower() == 'exit':
+            if len(commandParts) == 1:
+                break
+            else:
+                print("Incorrect number of arguments used for the exit command.")
+                print("The exit command must be structured as follows: exit")
+
+        else:
+            commandHelp()
 
 if __name__ == "__main__":
     main()
