@@ -6,6 +6,12 @@
 
 
 ### How to use the client
+Before running the client, ensure that the tabulate and requests libraries are installed. They can be installed using the following: 
+
+$ pip install tabulate
+
+$ pip install requests 
+
 To start the client, cd to the 'myclient' folder and execute the following command:
 
   $  py client.py
